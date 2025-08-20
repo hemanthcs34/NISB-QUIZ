@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Knowledge Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="logo-placeholder">LOGO</div>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1>Engineering Knowledge Quiz</h1>
+            <p>Answer 5 questions in a row correctly to pass.</p>
+            <button id="start-btn" class="btn">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="quiz-meta">
+                    <div class="streak-counter">
+                        <span class="streak-icon">🔥</span> Streak: <span id="streak-count">0</span>
+                    </div>
+                    <div class="timer" id="timer">30</div>
+                </div>
+            </div>
+            <h2 id="question-text">Question text goes here</h2>
+            <div id="answer-buttons" class="btn-grid">
+                <!-- Buttons will be inserted by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen">
+            <h1 id="result-message"></h1>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
