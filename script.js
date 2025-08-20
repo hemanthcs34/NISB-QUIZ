@@ -32,6 +32,8 @@ const quizState = {
     streak: 0,
     timer: null,
     shuffledQuestions: [],
+    timeLeft: config.TIME_PER_QUESTION,
+    isActive: false, // Flag to check if a quiz is in progress
 };
 
 // ===================================================================================
@@ -123,6 +125,24 @@ const questions = [
  * --------------------------------------------------------------------
  */
 
+// --- State Management Functions ---
+function saveState() {
+    // Use sessionStorage to save the state for the current browser tab
+    sessionStorage.setItem('quizSession', JSON.stringify(quizState));
+}
+
+function clearState() {
+    sessionStorage.removeItem('quizSession');
+    // Also reset the JS state object to its initial values
+    quizState.currentQuestionIndex = 0;
+    quizState.streak = 0;
+    quizState.timer = null;
+    quizState.shuffledQuestions = [];
+    quizState.timeLeft = config.TIME_PER_QUESTION;
+    quizState.isActive = false;
+}
+
+
 // A robust shuffle algorithm (Fisher-Yates) for true randomness
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -134,16 +154,44 @@ function shuffleArray(array) {
 
 // Initializes and starts the quiz
 function startQuiz() {
+    clearState(); // Start with a fresh state
     quizState.shuffledQuestions = shuffleArray([...questions]);
-    quizState.currentQuestionIndex = 0;
-    quizState.streak = 0;
-
+    quizState.isActive = true;
     domElements.startScreen.classList.remove('active');
     domElements.resultScreen.classList.remove('active');
     domElements.quizScreen.classList.add('active');
 
     showNextQuestion();
     updateStreakDisplay();
+}
+
+// Resumes a quiz from a saved state
+function resumeQuiz() {
+    domElements.startScreen.classList.remove('active');
+    domElements.quizScreen.classList.add('active');
+    showQuestionFromState();
+    updateStreakDisplay();
+}
+
+// Rebuilds the question view from the saved state
+function showQuestionFromState() {
+    resetState();
+    const question = quizState.shuffledQuestions[quizState.currentQuestionIndex];
+    domElements.questionText.innerText = question.question;
+
+    question.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add('btn');
+        if (answer.correct) {
+            button.dataset.correct = "true";
+        }
+        button.addEventListener('click', selectAnswer);
+        domElements.answerButtons.appendChild(button);
+    });
+
+    updateProgressBar();
+    startTimer(quizState.timeLeft); // Resume timer with remaining time
 }
 
 // Displays the next question or ends the quiz
@@ -169,7 +217,9 @@ function showNextQuestion() {
     });
 
     updateProgressBar();
-    startTimer();
+    startTimer(); // Starts with default time
+    quizState.timeLeft = config.TIME_PER_QUESTION;
+    saveState();
 }
 
 // Handles user's answer selection
@@ -178,11 +228,11 @@ function selectAnswer(e) {
     const selectedButton = e.target;
     const isCorrect = selectedButton.dataset.correct === "true";
 
+    quizState.streak = isCorrect ? quizState.streak + 1 : 0;
+
     if (isCorrect) {
-        quizState.streak++;
         selectedButton.classList.add('correct');
     } else {
-        quizState.streak = 0;
         selectedButton.classList.add('wrong');
     }
 
@@ -194,6 +244,7 @@ function selectAnswer(e) {
     });
 
     updateStreakDisplay();
+    saveState(); // Save state after an answer is chosen
 
     if (quizState.streak >= config.WINNING_STREAK) {
         setTimeout(() => endQuiz(true), config.NEXT_QUESTION_DELAY);
@@ -218,19 +269,21 @@ function resetState() {
 }
 
 // Starts the countdown timer for a question
-function startTimer() {
-    let timeLeft = config.TIME_PER_QUESTION;
-    domElements.timer.innerText = timeLeft;
+function startTimer(startTime = config.TIME_PER_QUESTION) {
+    quizState.timeLeft = startTime;
+    domElements.timer.innerText = quizState.timeLeft;
     quizState.timer = setInterval(() => {
-        timeLeft--;
-        domElements.timer.innerText = timeLeft;
-        if (timeLeft <= 0) {
+        quizState.timeLeft--;
+        domElements.timer.innerText = quizState.timeLeft;
+        if (quizState.timeLeft <= 0) {
             clearInterval(quizState.timer);
             handleTimeOut();
         }
-        if (timeLeft <= 10) {
+        if (quizState.timeLeft <= 10) {
             domElements.timer.classList.add('low-time');
         }
+        // Save state every second to keep the timer persistent
+        saveState();
     }, 1000);
 }
 
@@ -244,6 +297,7 @@ function handleTimeOut() {
         }
     });
     updateStreakDisplay();
+    saveState(); // Save the broken streak state
     setTimeout(moveToNext, config.NEXT_QUESTION_DELAY);
 }
 
@@ -255,6 +309,7 @@ function moveToNext() {
 
 // Ends the quiz and displays the result
 function endQuiz(isPassed) {
+    clearState(); // Clear the session state when the quiz is over
     domElements.quizScreen.classList.remove('active');
     domElements.resultScreen.classList.add('active');
     if (isPassed) {
@@ -280,5 +335,22 @@ function updateStreakDisplay() {
     }
 }
 
-// Initial event listener
+// --- Initialization ---
+function init() {
+    const savedStateJSON = sessionStorage.getItem('quizSession');
+    if (savedStateJSON) {
+        const savedState = JSON.parse(savedStateJSON);
+        // Check if there's an active quiz in the saved session
+        if (savedState.isActive) {
+            Object.assign(quizState, savedState); // Restore the state
+            resumeQuiz();
+            return;
+        }
+    }
+    // If no active session, show the start screen
+    domElements.startScreen.classList.add('active');
+}
+
 domElements.startBtn.addEventListener('click', startQuiz);
+
+init(); // Run initialization logic on page load
