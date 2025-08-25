@@ -1,14 +1,16 @@
 :root {
-    /* New Color Palette for a more unique, professional feel */
-    --primary-color: #00ff9b; /* Vibrant Mint Green Accent */
-    --background-color: #1a1d24; /* Very dark, almost black slate */
-    --container-bg-color: #242831; /* Slightly lighter slate for the card */
-    --text-color: #e2e2e2; /* Off-white for readability */
-    --text-secondary-color: #a0a0a0; /* Grey for less important text */
-    --border-color: rgba(255, 255, 255, 0.1);
+    /* Professional & Modern Color Palette */
+    --primary-color: #4a90e2; /* A professional, calm blue */
+    --background-color: #121212; /* Standard dark background */
+    --container-bg-color: rgba(36, 40, 49, 0.75); /* Semi-transparent slate for a frosted glass effect */
+    --button-bg-color: rgba(74, 144, 226, 0.15);
+    --button-hover-bg-color: var(--primary-color);
+    --text-color: #f0f0f0; /* Slightly brighter white for better contrast */
+    --text-secondary-color: #b0b0b0; /* Lighter grey for secondary text */
+    --border-color: rgba(255, 255, 255, 0.2);
     --shadow-color: rgba(0, 0, 0, 0.5);
-    --correct-color: #2ecc71;
-    --wrong-color: #e74c3c;
+    --correct-color: #28a745; /* A clear, standard green */
+    --wrong-color: #dc3545; /* A clear, standard red */
     --font-family: 'Poppins', sans-serif;
 }
 
@@ -27,9 +29,9 @@ body {
     color: var(--text-color);
     padding: 20px;
 
-    /* --- BACKGROUND IMAGE --- */
-    /* Replace this URL with your own image. Find cool, dark, abstract backgrounds on sites like unsplash.com or pexels.com */
-    background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop');
+    /* --- UPDATED BACKGROUND IMAGE --- */
+    background-color: var(--background-color); /* Fallback color */
+    background-image: url('assests/5166950.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed; /* Keeps the background static on scroll */
@@ -44,6 +46,10 @@ body {
     width: 90%; /* Use percentage for better responsiveness */
     max-width: 800px;
     position: relative;
+
+    /* Frosted glass effect */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 #logo-placeholder {
@@ -125,7 +131,7 @@ body {
     background-color: var(--primary-color);
     border-radius: 4px;
     transition: width 0.4s ease-in-out;
-    box-shadow: 0 0 10px rgba(0, 255, 155, 0.5);
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
 }
 
 .timer {
@@ -186,9 +192,9 @@ body {
 }
 
 .btn {
-    background-color: transparent;
+    background-color: var(--button-bg-color);
     color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 15px 30px;
     font-size: 1.1rem;
@@ -200,10 +206,10 @@ body {
 }
 
 .btn:hover:not([disabled]) {
-    background-color: var(--primary-color);
-    color: var(--background-color);
+    background-color: var(--button-hover-bg-color);
+    color: #ffffff;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 255, 155, 0.2);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
 }
 
 .btn.correct {
