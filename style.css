@@ -299,3 +299,26 @@ body {
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
+
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.page-logo {
+    width: 80px; /* Adjust size as needed */
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover; /* Ensures the image covers the circular area without distortion */
+}
+
+.event-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #FFFFFF; /* White color for visibility against blue */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Adds a subtle shadow for better readability */
+}
